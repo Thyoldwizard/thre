@@ -534,23 +534,24 @@ Ember is a SwiftUI + SwiftData iOS app for a "three meaningful tasks per day" ri
 
 ### Step 13 — Reflection variety + past reflections
 
-- [~] **13.1** — Create `ReflectionPrompts` service (Codex)
+- [x] **13.1** — Create `ReflectionPrompts` service — DONE (Codex)
   - **Files:** NEW `Ember/Services/ReflectionPrompts.swift`
   - **Deps:** 1.3
   - **Scope:** Array of 10 curated prompts. `prompt(for date: Date) -> String` returns deterministic rotation via `dayOfYear % 10`. Uses injected DateService.
   - **Done when:** Same date → same prompt. Adjacent dates → different.
 
-- [ ] **13.2** — Wire `ReflectionScreen` to use rotating prompt
+- [x] **13.2** — Wire `ReflectionScreen` to use rotating prompt — DONE (Codex)
   - **Files:** `Ember/Screens/ReflectionScreen.swift`
   - **Deps:** 13.1
   - **Scope:** Replace hardcoded prompt with `ReflectionPrompts.prompt(for: today)`.
   - **Done when:** Different prompt visible day-to-day in sim.
 
-- [ ] **13.3** — Build `PastReflectionSheet` + long-press hook
+- [x] **13.3** — Build `PastReflectionSheet` + long-press hook — DONE (Codex)
   - **Files:** NEW `Ember/Screens/PastReflectionSheet.swift`, `Ember/Screens/StreakScreen.swift`
   - **Deps:** none
   - **Scope:** Sheet displays a single Reflection for a date. Long-press any calendar day on StreakScreen with a saved reflection → presents the sheet.
   - **Done when:** Sim: save reflection today → long-press today on calendar → sheet shows the text.
+  - **Note:** Tap still opens the existing day-history sheet; long-press now opens the reflection-only archive sheet when that date has saved text.
 
 ---
 
@@ -558,7 +559,7 @@ Ember is a SwiftUI + SwiftData iOS app for a "three meaningful tasks per day" ri
 
 ### Step 14 — Theme palettes + OLED black
 
-- [ ] **14.1** — Define `EmberTheme` enum
+- [~] **14.1** — Define `EmberTheme` enum (Codex)
   - **Files:** NEW `Ember/DesignSystem/EmberTheme.swift`
   - **Deps:** none
   - **Scope:** `enum EmberTheme: String, CaseIterable { case ember, electric, bone, magma }`. Each case exposes accent + accent variants (pressed, subtle).
