@@ -559,41 +559,42 @@ Ember is a SwiftUI + SwiftData iOS app for a "three meaningful tasks per day" ri
 
 ### Step 14 — Theme palettes + OLED black
 
-- [~] **14.1** — Define `EmberTheme` enum (Codex)
+- [x] **14.1** — Define `EmberTheme` enum — DONE (Codex)
   - **Files:** NEW `Ember/DesignSystem/EmberTheme.swift`
   - **Deps:** none
   - **Scope:** `enum EmberTheme: String, CaseIterable { case ember, electric, bone, magma }`. Each case exposes accent + accent variants (pressed, subtle).
   - **Done when:** All 4 cases compile with full color spec.
 
-- [ ] **14.2** — Make `EmberColors` theme-aware
+- [x] **14.2** — Make `EmberColors` theme-aware — DONE (Codex)
   - **Files:** `Ember/DesignSystem/EmberColors.swift`
   - **Deps:** 14.1, 14.3
   - **Scope:** Convert `static let ember` to `static var ember: Color { currentTheme.accent }`. Same for slot 01 + accent-derived values.
   - **Done when:** Switching theme in Settings recolors the whole app on next render.
 
-- [ ] **14.3** — Add theme + OLED preferences storage
+- [x] **14.3** — Add theme + OLED preferences storage — DONE (Codex)
   - **Files:** `Ember/Services/EmberPreferences.swift`
   - **Deps:** 14.1
   - **Scope:** `currentTheme: EmberTheme` + `oledBlackEnabled: Bool` UserDefaults keys with getters/setters.
   - **Done when:** Set/get round-trips correctly.
 
-- [ ] **14.4** — Theme picker UI in `SettingsScreen`
+- [x] **14.4** — Theme picker UI in `SettingsScreen` — DONE (Codex)
   - **Files:** `Ember/Screens/SettingsScreen.swift`
   - **Deps:** 14.2, 14.3
   - **Scope:** Horizontal swatch picker showing 4 theme accents + OLED black toggle. Selection animates the app's accent globally.
   - **Done when:** Sim: pick electric → HomeScreen orbit + slot 01 turn cyan.
 
-- [ ] **14.5** — OLED background swap
+- [x] **14.5** — OLED background swap — DONE (Codex)
   - **Files:** `Ember/Screens/HomeScreen.swift` (and any screen using `#070707` directly)
   - **Deps:** 14.3
   - **Scope:** Background `#070707` becomes `#000000` when `oledBlackEnabled == true`. Grain overlay opacity drops to 1%.
   - **Done when:** Toggle in Settings flips background.
+  - **Note:** Studio screens now read shared `EmberColors.studioBackground` and `EmberColors.ember`, so theme selection and OLED black carry across the dark-shell surfaces on next render.
 
 ---
 
 ### Step 15 — App icon variants
 
-- [ ] **15.1** — Design + add icon variants to Assets
+- [~] **15.1** — Design + add icon variants to Assets (Codex)
   - **Files:** `Ember/Assets.xcassets/AppIcon-Black.appiconset/`, `AppIcon-Minimal.appiconset/`, `AppIcon-Magma.appiconset/`
   - **Deps:** none
   - **Scope:** Three alternate icon sets: Black (all-black ember dot), Minimal (single ember dot on dark), Magma (deep red ember on near-black). 1024×1024 + standard sizes. User can provide PNGs OR agent generates programmatic ones.
