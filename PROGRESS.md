@@ -382,7 +382,10 @@
 
 - [x] **RH-1** Added non-empty `CFBundleDisplayName` (`Ember Share`) to `EmberShareExtension/Info.plist` to fix the simulator install blocker for the embedded share extension.
 - [x] **RH-1 verification** `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild test -project Ember.xcodeproj -scheme Ember -destination 'id=C4923C77-28E7-4FA3-837B-1124569EE855' -derivedDataPath /private/tmp/EmberDerivedData CODE_SIGNING_ALLOWED=NO -only-testing:EmberTests` succeeded. The app installed, tests executed on `Clone 1 of iPhone 17`, and the previous `EmberShareExtension.appex` missing-display-name install failure did not recur.
+- [x] **RH-2** Changed the main app target Debug/Release `TARGETED_DEVICE_FAMILY` values to `1` so App Store v1 ships iPhone-only. Widget, share extension, and test target families were left unchanged.
+- [x] **RH-2 verification** `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project Ember.xcodeproj -scheme Ember -destination 'generic/platform=iOS' -derivedDataPath /private/tmp/EmberDerivedData CODE_SIGNING_ALLOWED=NO build` succeeded. Built app `UIDeviceFamily` is `[1]`. Existing App Intents concurrency warnings remain for RH-3.
+- [x] **Step 16 disposition** iPad layout work is deferred to v2 and is not a v1 release blocker.
 
 ---
 
-**Total items: ~144**
+**Total items: ~147**

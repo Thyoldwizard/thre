@@ -624,34 +624,38 @@ Source of truth: `RELEASE_HARDENING_PLAN.md`.
   - **Scope:** Added non-empty `CFBundleDisplayName` (`Ember Share`) to the share extension plist.
   - **Verification:** `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild test -project Ember.xcodeproj -scheme Ember -destination 'id=C4923C77-28E7-4FA3-837B-1124569EE855' -derivedDataPath /private/tmp/EmberDerivedData CODE_SIGNING_ALLOWED=NO -only-testing:EmberTests` succeeded. Tests executed past app install and ran on `Clone 1 of iPhone 17`.
 
-- [ ] **RH-2** — Make App Store v1 iPhone-only
+- [x] **RH-2** — Make App Store v1 iPhone-only — DONE (Codex)
   - **Files:** `Ember.xcodeproj/project.pbxproj`, `ROADMAP.md`, `PROGRESS.md`, `HANDOFF.md`
   - **Deps:** RH-1
   - **Scope:** Change main app target `TARGETED_DEVICE_FAMILY` from `"1,2"` to `1`; mark Step 16 deferred for v2.
+  - **Verification:** `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project Ember.xcodeproj -scheme Ember -destination 'generic/platform=iOS' -derivedDataPath /private/tmp/EmberDerivedData CODE_SIGNING_ALLOWED=NO build` succeeded. Built app `UIDeviceFamily` is `[1]`.
 
 ---
 
 ## Phase F — Adaptive
 
-### Step 16 — iPad layout
+### Step 16 — iPad layout (deferred to v2)
 
-- [ ] **16.1** — Branch `ContentView` on `horizontalSizeClass`
+- [-] **16.1** — Branch `ContentView` on `horizontalSizeClass` — DEFERRED to v2
   - **Files:** `Ember/ContentView.swift`
   - **Deps:** none
   - **Scope:** iPad (`.regular` width) wraps content in `NavigationSplitView`. Sidebar: nav (orbit thumbnail + nav buttons). Detail: current screen.
   - **Done when:** iPad sim shows split view; iPhone sim unchanged.
+  - **Note:** Deferred by RH-2. App Store v1 is iPhone-only.
 
-- [ ] **16.2** — Audit screens for fixed widths
+- [-] **16.2** — Audit screens for fixed widths — DEFERRED to v2
   - **Files:** All under `Ember/Screens/`
   - **Deps:** 16.1
   - **Scope:** Look for `.frame(width:)` and hardcoded layout assumptions. Replace with `.frame(maxWidth:)` or container queries. Focus modules stay max ~600pt wide on iPad.
   - **Done when:** Every screen renders correctly at iPad sizes.
+  - **Note:** Deferred by RH-2. App Store v1 is iPhone-only.
 
-- [ ] **16.3** — Enable iPad family + verify
+- [-] **16.3** — Enable iPad family + verify — DEFERRED to v2
   - **Files:** `Ember/Ember.xcodeproj/project.pbxproj`
   - **Deps:** 16.2
-  - **Scope:** `TARGETED_DEVICE_FAMILY = 1,2`. Build for iPad. Smoke test core flows.
+  - **Scope:** v2 should re-enable `TARGETED_DEVICE_FAMILY = 1,2`, build for iPad, and smoke test core flows.
   - **Done when:** App runs on iPad sim, all core flows work.
+  - **Note:** Deferred by RH-2. App Store v1 is iPhone-only.
 
 ---
 
