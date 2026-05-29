@@ -375,3 +375,14 @@
 ---
 
 **Total items: ~143**
+
+---
+
+## Release Hardening
+
+- [x] **RH-1** Added non-empty `CFBundleDisplayName` (`Ember Share`) to `EmberShareExtension/Info.plist` to fix the simulator install blocker for the embedded share extension.
+- [x] **RH-1 verification** `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild test -project Ember.xcodeproj -scheme Ember -destination 'id=C4923C77-28E7-4FA3-837B-1124569EE855' -derivedDataPath /private/tmp/EmberDerivedData CODE_SIGNING_ALLOWED=NO -only-testing:EmberTests` succeeded. The app installed, tests executed on `Clone 1 of iPhone 17`, and the previous `EmberShareExtension.appex` missing-display-name install failure did not recur.
+
+---
+
+**Total items: ~144**

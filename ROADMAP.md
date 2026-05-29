@@ -611,7 +611,23 @@ Ember is a SwiftUI + SwiftData iOS app for a "three meaningful tasks per day" ri
   - **Deps:** 15.2
   - **Scope:** Service wraps `UIApplication.shared.setAlternateIconName(_:)`. Settings picker grid shows current + alternates. Tap → switch.
   - **Done when:** Sim: switch icon → home screen icon changes on next app launch.
-  - **Note:** Programmatic Black / Minimal / Magma icon PNGs were generated into asset catalogs and the picker/service compile cleanly. Generic iOS build succeeded. Simulator test/install verification remains blocked by the preexisting `EmberShareExtension.appex` missing `CFBundleDisplayName` issue outside Step 15 scope.
+  - **Note:** Programmatic Black / Minimal / Magma icon PNGs were generated into asset catalogs and the picker/service compile cleanly. Generic iOS build succeeded. Simulator test/install verification was blocked during Step 15 by the preexisting `EmberShareExtension.appex` missing `CFBundleDisplayName` issue; RH-1 later resolved that install blocker.
+
+---
+
+## Release Hardening (v1)
+
+Source of truth: `RELEASE_HARDENING_PLAN.md`.
+
+- [x] **RH-1** — Fix share extension install blocker — DONE (Codex)
+  - **Files:** `EmberShareExtension/Info.plist`, `ROADMAP.md`, `PROGRESS.md`, `HANDOFF.md`
+  - **Scope:** Added non-empty `CFBundleDisplayName` (`Ember Share`) to the share extension plist.
+  - **Verification:** `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild test -project Ember.xcodeproj -scheme Ember -destination 'id=C4923C77-28E7-4FA3-837B-1124569EE855' -derivedDataPath /private/tmp/EmberDerivedData CODE_SIGNING_ALLOWED=NO -only-testing:EmberTests` succeeded. Tests executed past app install and ran on `Clone 1 of iPhone 17`.
+
+- [ ] **RH-2** — Make App Store v1 iPhone-only
+  - **Files:** `Ember.xcodeproj/project.pbxproj`, `ROADMAP.md`, `PROGRESS.md`, `HANDOFF.md`
+  - **Deps:** RH-1
+  - **Scope:** Change main app target `TARGETED_DEVICE_FAMILY` from `"1,2"` to `1`; mark Step 16 deferred for v2.
 
 ---
 

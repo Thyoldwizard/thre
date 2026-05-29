@@ -78,6 +78,22 @@ Latest implementation pass added:
 
 ## Recent Changes Completed
 
+### RH-1 - Share extension install blocker fixed (completed this session)
+
+**Modified files:**
+- `EmberShareExtension/Info.plist` - added top-level `CFBundleDisplayName` with value `Ember Share`.
+- `ROADMAP.md`, `PROGRESS.md`, `HANDOFF.md` - updated release-hardening status.
+
+**Verification:** The focused RH-1 command succeeded:
+
+```sh
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild test -project Ember.xcodeproj -scheme Ember -destination 'id=C4923C77-28E7-4FA3-837B-1124569EE855' -derivedDataPath /private/tmp/EmberDerivedData CODE_SIGNING_ALLOWED=NO -only-testing:EmberTests
+```
+
+Result: `** TEST SUCCEEDED **`. The app installed, the tests executed on `Clone 1 of iPhone 17`, and the previous `EmberShareExtension.appex` missing-display-name install blocker did not recur.
+
+Next release-hardening task: RH-2 from `RELEASE_HARDENING_PLAN.md`.
+
 ### Step 14 — Theme palettes + OLED black (completed this session)
 
 **New files:**
@@ -117,7 +133,7 @@ Latest implementation pass added:
 - `Ember/Screens/SettingsScreen.swift` — added the app icon picker panel to Appearance, inline icon previews, progress state during switching, and error alert handling.
 - `ROADMAP.md` — marked 15.1–15.3 done and resolved the parked question in favor of programmatic geometric variants.
 
-**Verification:** Generic iOS build succeeded with the Step 15 files in place. `git diff --check` passed. `EmberTests` still fail before execution because the simulator cannot install `EmberShareExtension.appex` without a non-empty `CFBundleDisplayName` in its Info.plist; this remains the known blocker outside Step 15 scope. Because of that install blocker, the simulator could not complete end-to-end icon-switch verification on SpringBoard.
+**Verification:** Generic iOS build succeeded with the Step 15 files in place. `git diff --check` passed. `EmberTests` failed before execution at the time because the simulator could not install `EmberShareExtension.appex` without a non-empty `CFBundleDisplayName` in its Info.plist; RH-1 later fixed that blocker. Because of that Step 15-time install blocker, the simulator could not complete end-to-end icon-switch verification on SpringBoard.
 
 ### Step 13 — Reflection variety + past reflections (completed this session)
 
@@ -699,7 +715,7 @@ Important local note: this machine's global `xcode-select` points at Command Lin
 
 ## Recommended Next Session Flow
 
-**Steps 1 through 14 are complete. Continue from Step 15 unless the user explicitly redirects.**
+**Release hardening is active. Use `RELEASE_HARDENING_PLAN.md` as the source of truth. RH-1 is complete; continue with RH-2 unless the user explicitly redirects.**
 
 1. Start from the inner repo:
 
@@ -707,11 +723,13 @@ Important local note: this machine's global `xcode-select` points at Command Lin
 cd "/Users/sheikhhassan/Desktop/iOS APP/Ember/Ember"
 ```
 
-2. Read these two files first:
+2. Read these files first:
 
 ```
-HANDOFF.md       ← current state + known risks
-ROADMAP.md       ← 16-step plan; check whether Gemini has marked Step 11 complete before starting any downstream work
+HANDOFF.md                  <- current state + known risks
+ROADMAP.md                  <- roadmap + release-hardening status
+PROGRESS.md                 <- verification history
+RELEASE_HARDENING_PLAN.md   <- source of truth for RH tasks
 ```
 
 3. Verify the build is still clean before touching anything:
@@ -720,9 +738,10 @@ ROADMAP.md       ← 16-step plan; check whether Gemini has marked Step 11 compl
 DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project Ember.xcodeproj -scheme Ember -destination 'generic/platform=iOS Simulator' -derivedDataPath /private/tmp/EmberDerivedData CODE_SIGNING_ALLOWED=NO build
 ```
 
-4. Execute ROADMAP.md sub-tasks in order from the first unchecked item.
-   - Mark each sub-task `[x] DONE` in ROADMAP.md when complete.
-   - Do not skip ahead.
+4. Execute release-hardening tasks in order from `RELEASE_HARDENING_PLAN.md`.
+   - After each RH task, update `ROADMAP.md`, `PROGRESS.md`, and `HANDOFF.md`.
+   - Run `git diff --check`.
+   - Commit only the files for that RH task where possible.
 
 5. After each meaningful step, run build/tests:
 
@@ -732,17 +751,17 @@ DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild test -projec
 
 ## Recommended Next Implementation Steps
 
-→ **Follow ROADMAP.md exactly, sub-task by sub-task.**
+-> **Follow `RELEASE_HARDENING_PLAN.md` exactly, task by task.**
 
-The ROADMAP is the source of truth for what to build next. It has 16 steps, ~85 sub-tasks, each with explicit files, dependencies, scope, and done-when criteria.
+The release hardening plan is the source of truth for v1. Do not implement iPad Step 16 for v1.
 
 **Next sub-tasks:**
 
 | ID | Sub-task | Deps |
 |----|----------|------|
-| 15.1 | Design + add icon variants to Assets | none |
-| 15.2 | Configure `CFBundleIcons` for alternates | 15.1 |
-| 15.3 | `AppIconService` + picker UI | 15.2 |
+| RH-2 | Make App Store v1 iPhone-only | RH-1 |
+| RH-3 | Treat warnings as release blockers | RH-2 |
+| RH-4 | Primary app icon QA and improvement | RH-3 |
 
 ## User Preferences / Constraints
 
