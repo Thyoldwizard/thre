@@ -78,6 +78,29 @@ Latest implementation pass added:
 
 ## Recent Changes Completed
 
+### RH-3 - Release warnings cleared (completed this session)
+
+**Modified files:**
+- `EmberWidget/Intents/AddTaskIntent.swift`, `EmberWidget/Intents/CompleteTaskIntent.swift`, `EmberWidget/Intents/ShowTodayIntent.swift` - changed static App Intent metadata to immutable `let` storage.
+- `Ember/Services/EmberAppShortcutsProvider.swift`, `Ember/Services/EmberFocusFilter.swift` - changed App Shortcuts and Focus Filter static metadata to immutable storage.
+- `Ember/Services/FocusSessionAttributes.swift`, `Ember/Services/FocusSessionService.swift` - updated ActivityKit request/update/end calls to current APIs and removed ActivityKit isolation warnings.
+- `Ember/Screens/ScheduleTimelineScreen.swift` - changed unused mutable `lane` local to `let`.
+- `ROADMAP.md`, `PROGRESS.md`, `HANDOFF.md` - updated release-hardening status.
+
+**Verification:** Generic iOS build succeeded:
+
+```sh
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project Ember.xcodeproj -scheme Ember -destination 'generic/platform=iOS' -derivedDataPath /private/tmp/EmberDerivedData CODE_SIGNING_ALLOWED=NO build
+```
+
+Warning/error scan returned no matches:
+
+```sh
+rg -n "warning:|error:" /tmp/ember-rh3-build.log
+```
+
+Next release-hardening task: RH-4 from `RELEASE_HARDENING_PLAN.md`.
+
 ### RH-2 - App Store v1 is iPhone-only (completed this session)
 
 **Modified files:**
@@ -93,9 +116,7 @@ DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project Emb
 
 Built app confirmation: `/private/tmp/EmberDerivedData/Build/Products/Debug-iphoneos/Ember.app/Info.plist` contains `UIDeviceFamily = [1]`.
 
-Known warnings still present and intentionally left for RH-3: App Intents static concurrency warnings in `AddTaskIntent`, `CompleteTaskIntent`, `ShowTodayIntent`, `EmberAppShortcutsProvider`, and `EmberFocusFilter`.
-
-Next release-hardening task: RH-3 from `RELEASE_HARDENING_PLAN.md`.
+Follow-up: RH-3 completed after this fix.
 
 ### RH-1 - Share extension install blocker fixed (completed this session)
 
@@ -734,7 +755,7 @@ Important local note: this machine's global `xcode-select` points at Command Lin
 
 ## Recommended Next Session Flow
 
-**Release hardening is active. Use `RELEASE_HARDENING_PLAN.md` as the source of truth. RH-1 and RH-2 are complete; continue with RH-3 unless the user explicitly redirects.**
+**Release hardening is active. Use `RELEASE_HARDENING_PLAN.md` as the source of truth. RH-1 through RH-3 are complete; continue with RH-4 unless the user explicitly redirects.**
 
 1. Start from the inner repo:
 
@@ -778,7 +799,6 @@ The release hardening plan is the source of truth for v1. Do not implement iPad 
 
 | ID | Sub-task | Deps |
 |----|----------|------|
-| RH-3 | Treat warnings as release blockers | RH-2 |
 | RH-4 | Primary app icon QA and improvement | RH-3 |
 | RH-5 | Release metadata surfaces in Settings | RH-4 |
 

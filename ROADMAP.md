@@ -630,6 +630,12 @@ Source of truth: `RELEASE_HARDENING_PLAN.md`.
   - **Scope:** Change main app target `TARGETED_DEVICE_FAMILY` from `"1,2"` to `1`; mark Step 16 deferred for v2.
   - **Verification:** `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project Ember.xcodeproj -scheme Ember -destination 'generic/platform=iOS' -derivedDataPath /private/tmp/EmberDerivedData CODE_SIGNING_ALLOWED=NO build` succeeded. Built app `UIDeviceFamily` is `[1]`.
 
+- [x] **RH-3** — Treat warnings as release blockers — DONE (Codex)
+  - **Files:** `EmberWidget/Intents/AddTaskIntent.swift`, `EmberWidget/Intents/CompleteTaskIntent.swift`, `EmberWidget/Intents/ShowTodayIntent.swift`, `Ember/Services/EmberAppShortcutsProvider.swift`, `Ember/Services/EmberFocusFilter.swift`, `Ember/Services/FocusSessionAttributes.swift`, `Ember/Services/FocusSessionService.swift`, `Ember/Screens/ScheduleTimelineScreen.swift`, `ROADMAP.md`, `PROGRESS.md`, `HANDOFF.md`
+  - **Deps:** RH-2
+  - **Scope:** Fixed App Intents static concurrency warnings, updated ActivityKit calls away from deprecated APIs, removed ActivityKit isolation warnings, and changed the timeline lane local from `var` to `let`.
+  - **Verification:** `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project Ember.xcodeproj -scheme Ember -destination 'generic/platform=iOS' -derivedDataPath /private/tmp/EmberDerivedData CODE_SIGNING_ALLOWED=NO build` succeeded. `rg -n "warning:|error:" /tmp/ember-rh3-build.log` returned no matches.
+
 ---
 
 ## Phase F — Adaptive
