@@ -261,9 +261,23 @@ struct MorningRitualView: View {
                 .onSubmit { isNameFocused = false }
 
             VStack(spacing: EmberSpacing.sm) {
-                signInButton(title: "Continue with Apple", systemImage: "apple.logo")
-                signInButton(title: "Continue with Google", systemImage: nil)
-                Button("Use thre without an account") {
+                Button {
+                    finishOnboarding()
+                } label: {
+                    Text("Continue")
+                        .font(EmberTypography.bodyMedium)
+                        .foregroundStyle(EmberColors.textOnLight)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 15)
+                        .background(
+                            RoundedRectangle(cornerRadius: EmberCornerRadii.button, style: .continuous)
+                                .fill(EmberColors.lightPanel)
+                        )
+                }
+                .buttonStyle(.plain)
+
+                Button("Skip for now") {
+                    nameDraft = ""
                     finishOnboarding()
                 }
                 .font(EmberTypography.captionMedium)
@@ -445,33 +459,6 @@ struct MorningRitualView: View {
               activePages.indices.contains(index - 1)
         else { return nil }
         return activePages[index - 1]
-    }
-
-    private func signInButton(title: String, systemImage: String?) -> some View {
-        Button {
-            finishOnboarding()
-        } label: {
-            HStack(spacing: EmberSpacing.sm) {
-                if let systemImage {
-                    Image(systemName: systemImage)
-                        .font(.system(size: 18, weight: .semibold))
-                } else {
-                    Text("G")
-                        .font(.system(size: 18, weight: .bold))
-                }
-
-                Text(title)
-                    .font(EmberTypography.bodyMedium)
-            }
-            .foregroundStyle(EmberColors.textOnLight)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 15)
-            .background(
-                RoundedRectangle(cornerRadius: EmberCornerRadii.button, style: .continuous)
-                    .fill(EmberColors.lightPanel)
-            )
-        }
-        .buttonStyle(.plain)
     }
 
     private func finishOnboarding() {
