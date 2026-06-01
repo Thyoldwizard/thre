@@ -1,5 +1,7 @@
 # thre
 
+[![CI](https://github.com/Thyoldwizard/thre/actions/workflows/ci.yml/badge.svg)](https://github.com/Thyoldwizard/thre/actions/workflows/ci.yml)
+
 thre is a native iOS focus app built around one calm constraint: choose the three tasks that matter today, work through them deliberately, and close the day with rhythm and reflection.
 
 The app is intentionally small in scope. It is not a general-purpose task manager, team workspace, or productivity dashboard. It is a SwiftUI reference project for building a focused, local-first iOS app with SwiftData, widgets, Live Activities, App Intents, reminders, share extension support, and a polished design system.
