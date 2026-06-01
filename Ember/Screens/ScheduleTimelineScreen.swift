@@ -14,13 +14,14 @@ struct ScheduleTimelineScreen: View {
     private let cardSpacing: CGFloat = 14
 
     private var background: Color { EmberColors.studioBackground }
-    private let panel = Color(hex: "131313")
-    private let panelRaised = Color(hex: "191919")
-    private let border = Color.white.opacity(0.07)
-    private let divider = Color.white.opacity(0.08)
-    private let textPrimary = Color(hex: "F7F3EA")
-    private let textSecondary = Color(hex: "8B8B86")
-    private let textMuted = Color(hex: "6D6D69")
+    private let panel = EmberColors.primaryPanel
+    private let row = EmberColors.nestedRow
+    private let raised = EmberColors.raisedElement
+    private let border = EmberColors.divider
+    private let divider = EmberColors.divider
+    private let textPrimary = EmberColors.textPrimary
+    private let textSecondary = EmberColors.textSecondary
+    private let textMuted = EmberColors.textTertiary
     private var ember: Color { EmberColors.ember }
 
     init() {
@@ -64,7 +65,11 @@ struct ScheduleTimelineScreen: View {
 
     var body: some View {
         GeometryReader { geo in
-            let contentWidth = max(0, geo.size.width - 36 - hourLabelWidth - 14)
+            let viewportWidth = max(0, geo.size.width - (EmberSpacing.screenHorizontal * 2))
+            let contentWidth = max(
+                0,
+                geo.size.width - (EmberSpacing.screenHorizontal * 2) - 36 - 16 - hourLabelWidth - 14
+            )
             let placements = timelinePlacements(contentWidth: contentWidth)
 
             ZStack {
@@ -81,9 +86,12 @@ struct ScheduleTimelineScreen: View {
                             emptyState
                         } else {
                             timelinePanel(contentWidth: contentWidth, placements: placements)
+                                .frame(width: viewportWidth, alignment: .leading)
+                                .clipped()
                         }
                     }
-                    .padding(.horizontal, 18)
+                    .padding(.horizontal, EmberSpacing.screenHorizontal)
+                    .frame(width: viewportWidth, alignment: .leading)
                     .padding(.bottom, max(32, geo.safeAreaInsets.bottom + 24))
                 }
             }
@@ -99,8 +107,8 @@ struct ScheduleTimelineScreen: View {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(textPrimary)
-                    .frame(width: 40, height: 40)
-                    .background(Circle().fill(panel))
+                    .frame(width: 42, height: 42)
+                    .background(Circle().fill(raised))
                     .overlay(Circle().strokeBorder(border, lineWidth: 1))
             }
             .buttonStyle(.plain)
@@ -123,12 +131,12 @@ struct ScheduleTimelineScreen: View {
                 .font(.system(size: 22, weight: .semibold))
                 .monospacedDigit()
                 .foregroundStyle(textPrimary)
-                .frame(minWidth: 48, minHeight: 40)
+                .frame(width: 42, height: 40)
                 .background(
-                    RoundedRectangle(cornerRadius: 4, style: .continuous)
-                        .fill(panel)
+                    RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
+                        .fill(raised)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 4, style: .continuous)
+                            RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
                                 .strokeBorder(border, lineWidth: 1)
                         )
                 )
@@ -145,10 +153,11 @@ struct ScheduleTimelineScreen: View {
 
                 Spacer(minLength: 12)
 
-                Text("\(completedScheduledCount)/\(scheduledTasks.count) closed")
+                Text("\(completedScheduledCount)/\(scheduledTasks.count) done")
                     .font(.system(size: 12, weight: .semibold))
-                    .tracking(1.6)
                     .foregroundStyle(textSecondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
             }
 
             HStack(spacing: 12) {
@@ -159,10 +168,10 @@ struct ScheduleTimelineScreen: View {
         }
         .padding(18)
         .background(
-            RoundedRectangle(cornerRadius: 4, style: .continuous)
+            RoundedRectangle(cornerRadius: EmberCornerRadii.card, style: .continuous)
                 .fill(panel)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 4, style: .continuous)
+                    RoundedRectangle(cornerRadius: EmberCornerRadii.card, style: .continuous)
                         .strokeBorder(border, lineWidth: 1)
                 )
         )
@@ -196,17 +205,17 @@ struct ScheduleTimelineScreen: View {
 
                 Spacer()
 
-                Text("06:00-23:00")
+                Text("6 AM-11 PM")
                     .font(.system(size: 11, weight: .semibold))
                     .tracking(1.4)
                     .foregroundStyle(textMuted)
             }
 
             ZStack(alignment: .topLeading) {
-                RoundedRectangle(cornerRadius: 4, style: .continuous)
+                RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
                     .fill(panel)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 4, style: .continuous)
+                        RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
                             .strokeBorder(border, lineWidth: 1)
                     )
 
@@ -227,10 +236,10 @@ struct ScheduleTimelineScreen: View {
         }
         .padding(18)
         .background(
-            RoundedRectangle(cornerRadius: 4, style: .continuous)
-                .fill(panelRaised)
+            RoundedRectangle(cornerRadius: EmberCornerRadii.card, style: .continuous)
+                .fill(panel)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 4, style: .continuous)
+                    RoundedRectangle(cornerRadius: EmberCornerRadii.card, style: .continuous)
                         .strokeBorder(border, lineWidth: 1)
                 )
         )
@@ -288,6 +297,7 @@ struct ScheduleTimelineScreen: View {
                         .foregroundStyle(task.isCompleted ? textSecondary : textPrimary)
                         .strikethrough(task.isCompleted, color: textSecondary)
                         .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     Text(formattedTime(task.scheduledTime))
                         .font(.system(size: 12, weight: .medium))
@@ -317,16 +327,16 @@ struct ScheduleTimelineScreen: View {
         }
         .padding(14)
         .background(
-            RoundedRectangle(cornerRadius: 4, style: .continuous)
-                .fill(Color.black.opacity(0.88))
+            RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
+                .fill(row)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 4, style: .continuous)
-                        .strokeBorder(task.isCompleted ? Color.white.opacity(0.08) : ember.opacity(0.26), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
+                        .strokeBorder(task.isCompleted ? border : ember.opacity(0.30), lineWidth: 1)
                 )
         )
         .overlay(alignment: .leading) {
             Rectangle()
-                .fill(task.isCompleted ? Color.white.opacity(0.14) : ember)
+                .fill(task.isCompleted ? textMuted : ember)
                 .frame(width: 3)
         }
         .accessibilityElement(children: .combine)
@@ -343,7 +353,7 @@ struct ScheduleTimelineScreen: View {
             .background(
                 Capsule()
                     .fill(Color.white.opacity(0.04))
-                    .overlay(Capsule().strokeBorder(Color.white.opacity(0.08), lineWidth: 1))
+                    .overlay(Capsule().strokeBorder(border, lineWidth: 1))
             )
     }
 
@@ -357,11 +367,11 @@ struct ScheduleTimelineScreen: View {
                 .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(textSecondary)
 
-            RoundedRectangle(cornerRadius: 4, style: .continuous)
+            RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
                 .fill(panel)
                 .frame(height: 220)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 4, style: .continuous)
+                    RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
                         .strokeBorder(border, style: StrokeStyle(lineWidth: 1, dash: [4, 6]))
                 )
                 .overlay {
@@ -378,10 +388,10 @@ struct ScheduleTimelineScreen: View {
         }
         .padding(18)
         .background(
-            RoundedRectangle(cornerRadius: 4, style: .continuous)
-                .fill(panelRaised)
+            RoundedRectangle(cornerRadius: EmberCornerRadii.card, style: .continuous)
+                .fill(panel)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 4, style: .continuous)
+                    RoundedRectangle(cornerRadius: EmberCornerRadii.card, style: .continuous)
                         .strokeBorder(border, lineWidth: 1)
                 )
         )

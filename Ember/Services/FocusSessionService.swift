@@ -1,12 +1,4 @@
 // FocusSessionService.swift
-// Step 8.5 — Wraps ActivityKit lifecycle for a focus session Live Activity.
-// All ActivityKit calls are gated on iOS 16.1+ availability.
-//
-// Usage:
-//   await FocusSessionService.shared.start(for: task)
-//   await FocusSessionService.shared.update(completedCount: n)
-//   await FocusSessionService.shared.end()
-//
 import Foundation
 import ActivityKit
 

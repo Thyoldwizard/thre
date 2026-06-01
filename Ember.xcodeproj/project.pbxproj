@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5FD7931B2F685E7F004E84A1 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FD7931A2F685E7F004E84A1 /* WidgetKit.framework */; };
+		5FD7931D2F685E7F004E84A1 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FD7931C2F685E7F004E84A1 /* SwiftUI.framework */; };
+		5FD7932C2F685E81004E84A1 /* EmberWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5FD793182F685E7F004E84A1 /* EmberWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6A10100B2F70000100C0D4E0 /* EmberShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6A10100A2F70000100C0D4E0 /* EmberShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		5F894AEC2F67267E009C8EA3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,17 +28,99 @@
 			remoteGlobalIDString = 5F894ADB2F67267C009C8EA3;
 			remoteInfo = Ember;
 		};
+		5FD7932A2F685E81004E84A1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5F894AD42F67267C009C8EA3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5FD793172F685E7F004E84A1;
+			remoteInfo = EmberWidgetExtension;
+		};
+		6A1010102F70000100C0D4E0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5F894AD42F67267C009C8EA3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6A1010012F70000100C0D4E0;
+			remoteInfo = EmberShareExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5FD793312F685E81004E84A1 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5FD7932C2F685E81004E84A1 /* EmberWidgetExtension.appex in Embed Foundation Extensions */,
+				6A10100B2F70000100C0D4E0 /* EmberShareExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5F894ADC2F67267C009C8EA3 /* Ember.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ember.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F894AEB2F67267E009C8EA3 /* EmberTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EmberTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F894AF52F67267E009C8EA3 /* EmberUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EmberUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FD793182F685E7F004E84A1 /* EmberWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = EmberWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FD7931A2F685E7F004E84A1 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		5FD7931C2F685E7F004E84A1 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		5FD7933A2F685F74004E84A1 /* EmberWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EmberWidgetExtension.entitlements; sourceTree = "<group>"; };
+		6A10100A2F70000100C0D4E0 /* EmberShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = EmberShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5F6C1A102F6A000100C0D4E0 /* Exceptions for "Ember" folder in "Ember" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5F894ADB2F67267C009C8EA3 /* Ember */;
+		};
+		5FD7932D2F685E81004E84A1 /* Exceptions for "EmberWidget" folder in "EmberWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5FD793172F685E7F004E84A1 /* EmberWidgetExtension */;
+		};
+		5FD7933C2F686038004E84A1 /* Exceptions for "Ember" folder in "EmberWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Models/DailyRecord.swift,
+				Models/EmberTask.swift,
+				Models/Reflection.swift,
+				Models/Subtask.swift,
+				Services/FocusSessionAttributes.swift,
+			);
+			target = 5FD793172F685E7F004E84A1 /* EmberWidgetExtension */;
+		};
+		5FD7933D2F6A9001004E84A1 /* Exceptions for "EmberWidget" folder in "Ember" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Intents/AddTaskIntent.swift,
+				Intents/CompleteTaskIntent.swift,
+				Intents/ShowTodayIntent.swift,
+			);
+			target = 5F894ADB2F67267C009C8EA3 /* Ember */;
+		};
+		6A1010152F70000100C0D4E0 /* Exceptions for "EmberShareExtension" folder in "EmberShareExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 6A1010012F70000100C0D4E0 /* EmberShareExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5F894ADE2F67267C009C8EA3 /* Ember */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5F6C1A102F6A000100C0D4E0 /* Exceptions for "Ember" folder in "Ember" target */,
+				5FD7933C2F686038004E84A1 /* Exceptions for "Ember" folder in "EmberWidgetExtension" target */,
+			);
 			path = Ember;
 			sourceTree = "<group>";
 		};
@@ -43,6 +132,23 @@
 		5F894AF82F67267E009C8EA3 /* EmberUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = EmberUITests;
+			sourceTree = "<group>";
+		};
+		5FD7931E2F685E7F004E84A1 /* EmberWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5FD7932D2F685E81004E84A1 /* Exceptions for "EmberWidget" folder in "EmberWidgetExtension" target */,
+				5FD7933D2F6A9001004E84A1 /* Exceptions for "EmberWidget" folder in "Ember" target */,
+			);
+			path = EmberWidget;
+			sourceTree = "<group>";
+		};
+		6A1010022F70000100C0D4E0 /* EmberShareExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6A1010152F70000100C0D4E0 /* Exceptions for "EmberShareExtension" folder in "EmberShareExtension" target */,
+			);
+			path = EmberShareExtension;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -69,15 +175,35 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5FD793152F685E7F004E84A1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5FD7931D2F685E7F004E84A1 /* SwiftUI.framework in Frameworks */,
+				5FD7931B2F685E7F004E84A1 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6A1010042F70000100C0D4E0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		5F894AD32F67267C009C8EA3 = {
 			isa = PBXGroup;
 			children = (
+				5FD7933A2F685F74004E84A1 /* EmberWidgetExtension.entitlements */,
 				5F894ADE2F67267C009C8EA3 /* Ember */,
 				5F894AEE2F67267E009C8EA3 /* EmberTests */,
 				5F894AF82F67267E009C8EA3 /* EmberUITests */,
+				5FD7931E2F685E7F004E84A1 /* EmberWidget */,
+				6A1010022F70000100C0D4E0 /* EmberShareExtension */,
+				5FD793192F685E7F004E84A1 /* Frameworks */,
 				5F894ADD2F67267C009C8EA3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,8 +214,19 @@
 				5F894ADC2F67267C009C8EA3 /* Ember.app */,
 				5F894AEB2F67267E009C8EA3 /* EmberTests.xctest */,
 				5F894AF52F67267E009C8EA3 /* EmberUITests.xctest */,
+				5FD793182F685E7F004E84A1 /* EmberWidgetExtension.appex */,
+				6A10100A2F70000100C0D4E0 /* EmberShareExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		5FD793192F685E7F004E84A1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5FD7931A2F685E7F004E84A1 /* WidgetKit.framework */,
+				5FD7931C2F685E7F004E84A1 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -102,10 +239,13 @@
 				5F894AD82F67267C009C8EA3 /* Sources */,
 				5F894AD92F67267C009C8EA3 /* Frameworks */,
 				5F894ADA2F67267C009C8EA3 /* Resources */,
+				5FD793312F685E81004E84A1 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5FD7932B2F685E81004E84A1 /* PBXTargetDependency */,
+				6A1010112F70000100C0D4E0 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				5F894ADE2F67267C009C8EA3 /* Ember */,
@@ -163,6 +303,50 @@
 			productReference = 5F894AF52F67267E009C8EA3 /* EmberUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		5FD793172F685E7F004E84A1 /* EmberWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5FD7932E2F685E81004E84A1 /* Build configuration list for PBXNativeTarget "EmberWidgetExtension" */;
+			buildPhases = (
+				5FD793142F685E7F004E84A1 /* Sources */,
+				5FD793152F685E7F004E84A1 /* Frameworks */,
+				5FD793162F685E7F004E84A1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5FD7931E2F685E7F004E84A1 /* EmberWidget */,
+			);
+			name = EmberWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = EmberWidgetExtension;
+			productReference = 5FD793182F685E7F004E84A1 /* EmberWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		6A1010012F70000100C0D4E0 /* EmberShareExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6A1010142F70000100C0D4E0 /* Build configuration list for PBXNativeTarget "EmberShareExtension" */;
+			buildPhases = (
+				6A1010032F70000100C0D4E0 /* Sources */,
+				6A1010042F70000100C0D4E0 /* Frameworks */,
+				6A1010052F70000100C0D4E0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				6A1010022F70000100C0D4E0 /* EmberShareExtension */,
+			);
+			name = EmberShareExtension;
+			packageProductDependencies = (
+			);
+			productName = EmberShareExtension;
+			productReference = 6A10100A2F70000100C0D4E0 /* EmberShareExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -184,6 +368,12 @@
 						CreatedOnToolsVersion = 26.3;
 						TestTargetID = 5F894ADB2F67267C009C8EA3;
 					};
+					5FD793172F685E7F004E84A1 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					6A1010012F70000100C0D4E0 = {
+						CreatedOnToolsVersion = 26.3;
+					};
 				};
 			};
 			buildConfigurationList = 5F894AD72F67267C009C8EA3 /* Build configuration list for PBXProject "Ember" */;
@@ -203,6 +393,8 @@
 				5F894ADB2F67267C009C8EA3 /* Ember */,
 				5F894AEA2F67267E009C8EA3 /* EmberTests */,
 				5F894AF42F67267E009C8EA3 /* EmberUITests */,
+				5FD793172F685E7F004E84A1 /* EmberWidgetExtension */,
+				6A1010012F70000100C0D4E0 /* EmberShareExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -223,6 +415,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5F894AF32F67267E009C8EA3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5FD793162F685E7F004E84A1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6A1010052F70000100C0D4E0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -253,6 +459,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5FD793142F685E7F004E84A1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6A1010032F70000100C0D4E0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -265,6 +485,16 @@
 			isa = PBXTargetDependency;
 			target = 5F894ADB2F67267C009C8EA3 /* Ember */;
 			targetProxy = 5F894AF62F67267E009C8EA3 /* PBXContainerItemProxy */;
+		};
+		5FD7932B2F685E81004E84A1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5FD793172F685E7F004E84A1 /* EmberWidgetExtension */;
+			targetProxy = 5FD7932A2F685E81004E84A1 /* PBXContainerItemProxy */;
+		};
+		6A1010112F70000100C0D4E0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6A1010012F70000100C0D4E0 /* EmberShareExtension */;
+			targetProxy = 6A1010102F70000100C0D4E0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -393,15 +623,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Ember/Ember.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Ember/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -409,10 +640,15 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ember.Ember;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -424,15 +660,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Ember/Ember.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Ember/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -441,9 +675,13 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ember.Ember;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -530,6 +768,124 @@
 			};
 			name = Release;
 		};
+		5FD7932F2F685E81004E84A1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = EmberWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EmberWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = EmberWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ember.Ember.EmberWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5FD793302F685E81004E84A1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = EmberWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EmberWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = EmberWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ember.Ember.EmberWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		6A1010122F70000100C0D4E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = EmberWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EmberShareExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ember.Ember.EmberShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6A1010132F70000100C0D4E0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = EmberWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EmberShareExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ember.Ember.EmberShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -565,6 +921,24 @@
 			buildConfigurations = (
 				5F894B062F67267E009C8EA3 /* Debug */,
 				5F894B072F67267E009C8EA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5FD7932E2F685E81004E84A1 /* Build configuration list for PBXNativeTarget "EmberWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5FD7932F2F685E81004E84A1 /* Debug */,
+				5FD793302F685E81004E84A1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6A1010142F70000100C0D4E0 /* Build configuration list for PBXNativeTarget "EmberShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6A1010122F70000100C0D4E0 /* Debug */,
+				6A1010132F70000100C0D4E0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

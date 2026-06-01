@@ -8,7 +8,6 @@ struct SettingsScreen: View {
     @AppStorage(EmberPreferenceKey.soundEnabled) private var soundEnabled = true
     @AppStorage(EmberPreferenceKey.hapticsEnabled) private var hapticsEnabled = true
     @AppStorage(EmberPreferenceKey.reducedMotionEnabled) private var reducedMotionEnabled = false
-    // Step 8.9
     @AppStorage(EmberPreferenceKey.autoStartScheduledSessions) private var autoStartScheduledSessions = true
     @AppStorage(EmberPreferenceKey.currentTheme) private var currentThemeRaw = EmberTheme.ember.rawValue
     @AppStorage(EmberPreferenceKey.oledBlackEnabled) private var oledBlackEnabled = false
@@ -23,11 +22,13 @@ struct SettingsScreen: View {
     }
 
     private var background: Color { EmberColors.studioBackground }
-    private let panel = Color(hex: "181818")
-    private let panelElevated = Color(hex: "1F1F1F")
-    private let panelMuted = Color(hex: "2A2A2A")
-    private let textPrimary = Color(hex: "F7F3EA")
-    private let textSecondary = Color(hex: "8B8B86")
+    private let panel = EmberColors.primaryPanel
+    private let panelElevated = EmberColors.raisedElement
+    private let panelMuted = EmberColors.nestedRow
+    private let textPrimary = EmberColors.textPrimary
+    private let textSecondary = EmberColors.textSecondary
+    private let textTertiary = EmberColors.textTertiary
+    private let hairline = EmberColors.divider
     private var ember: Color { selectedTheme.accent }
 
     var body: some View {
@@ -42,14 +43,14 @@ struct SettingsScreen: View {
                     preferencePanel
                     privacyPanel
                 }
-                .padding(.horizontal, 18)
+                .padding(.horizontal, EmberSpacing.screenHorizontal)
                 .padding(.top, 14)
                 .padding(.bottom, 42)
             }
         }
         .toolbar(.hidden, for: .navigationBar)
-        .animation(.spring(response: 0.28, dampingFraction: 0.86), value: currentThemeRaw)
-        .animation(.easeInOut(duration: 0.18), value: oledBlackEnabled)
+        .animation(EmberAnimation.snappy, value: currentThemeRaw)
+        .animation(EmberAnimation.snappy, value: oledBlackEnabled)
         .task {
             await refreshNotificationStatus()
             await MainActor.run {
@@ -73,7 +74,7 @@ struct SettingsScreen: View {
                     .foregroundStyle(textPrimary)
                     .frame(width: 42, height: 42)
                     .background(Circle().fill(panelElevated))
-                    .overlay(Circle().strokeBorder(Color.white.opacity(0.08), lineWidth: 1))
+                    .overlay(Circle().strokeBorder(hairline, lineWidth: 1))
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Back")
@@ -82,9 +83,7 @@ struct SettingsScreen: View {
             Spacer()
 
             Text("SETTINGS")
-                .font(.system(size: 11, weight: .semibold))
-                .tracking(2.4)
-                .foregroundStyle(textSecondary)
+                .emberSectionLabel()
 
             Spacer()
 
@@ -104,9 +103,7 @@ struct SettingsScreen: View {
             sectionHeader("REMINDERS")
 
             HStack(spacing: 12) {
-                Circle()
-                    .fill(statusColor)
-                    .frame(width: 9, height: 9)
+                rowIcon("bell.badge", tint: statusColor)
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(notificationStatus)
@@ -125,15 +122,24 @@ struct SettingsScreen: View {
                 } label: {
                     Text(notificationStatus == "Allowed" ? "Refresh" : "Allow")
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(background)
+                        .foregroundStyle(notificationStatus == "Allowed" ? textSecondary : background)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 9)
-                        .background(Capsule().fill(ember))
+                        .background(
+                            Capsule()
+                                .fill(notificationStatus == "Allowed" ? panelElevated : ember)
+                        )
+                        .overlay(
+                            Capsule()
+                                .strokeBorder(notificationStatus == "Allowed" ? hairline : Color.clear, lineWidth: 1)
+                        )
                 }
                 .buttonStyle(.plain)
             }
+            .padding(14)
+            .background(rowBackground)
         }
-        .padding(18)
+        .padding(20)
         .background(studioPanel)
     }
 
@@ -144,6 +150,7 @@ struct SettingsScreen: View {
                 .padding(.bottom, 8)
 
             settingsToggle(
+                icon: "speaker.wave.2",
                 title: "Sound",
                 subtitle: "Completion tones and reminder sound.",
                 identifier: "settings.sound",
@@ -151,6 +158,7 @@ struct SettingsScreen: View {
             )
             divider
             settingsToggle(
+                icon: "hand.tap",
                 title: "Haptics",
                 subtitle: "Physical feedback during completion.",
                 identifier: "settings.haptics",
@@ -158,6 +166,7 @@ struct SettingsScreen: View {
             )
             divider
             settingsToggle(
+                icon: "figure.walk.motion",
                 title: "Reduced Motion",
                 subtitle: "Calmer orbit and victory movement.",
                 identifier: "settings.reducedMotion",
@@ -165,13 +174,14 @@ struct SettingsScreen: View {
             )
             divider
             settingsToggle(
+                icon: "timer",
                 title: "Auto Focus Session",
                 subtitle: "Start a Live Activity when a scheduled task is due.",
                 identifier: "settings.autoStartSessions",
                 isOn: $autoStartScheduledSessions
             )
         }
-        .padding(18)
+        .padding(20)
         .background(studioPanel)
     }
 
@@ -179,14 +189,14 @@ struct SettingsScreen: View {
         VStack(alignment: .leading, spacing: 16) {
             sectionHeader("APPEARANCE")
 
-            HStack(spacing: 12) {
+            LazyVGrid(columns: settingsGridColumns, spacing: 12) {
                 ForEach(EmberTheme.allCases, id: \.rawValue) { theme in
                     Button {
                         currentThemeRaw = theme.rawValue
                     } label: {
                         VStack(alignment: .leading, spacing: 10) {
                             ZStack {
-                                RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
                                     .fill(panelElevated)
                                     .frame(height: 54)
 
@@ -205,7 +215,7 @@ struct SettingsScreen: View {
                                 }
                             }
 
-                            Text(theme.rawValue.uppercased())
+                            Text(theme.displayName.uppercased())
                                 .font(.system(size: 10, weight: .semibold))
                                 .tracking(1.5)
                                 .foregroundStyle(selectedTheme == theme ? textPrimary : textSecondary)
@@ -213,11 +223,11 @@ struct SettingsScreen: View {
                         .padding(10)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(
-                            RoundedRectangle(cornerRadius: 4, style: .continuous)
-                                .fill(panel)
+                            RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
+                                .fill(panelMuted)
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 4, style: .continuous)
-                                        .strokeBorder(selectedTheme == theme ? theme.accent.opacity(0.7) : Color.white.opacity(0.08), lineWidth: 1)
+                                    RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
+                                        .strokeBorder(selectedTheme == theme ? theme.accent.opacity(0.72) : hairline, lineWidth: 1)
                                 )
                         )
                     }
@@ -232,9 +242,13 @@ struct SettingsScreen: View {
 
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    Text("App Icon")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(textPrimary)
+                    HStack(spacing: 12) {
+                        rowIcon("app.dashed", tint: textSecondary)
+
+                        Text("App Icon")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundStyle(textPrimary)
+                    }
 
                     Spacer()
 
@@ -249,7 +263,7 @@ struct SettingsScreen: View {
                     .font(.system(size: 13, weight: .regular))
                     .foregroundStyle(textSecondary)
 
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                LazyVGrid(columns: [GridItem(.flexible())], spacing: 12) {
                     ForEach(AppIconService.Icon.allCases) { icon in
                         Button {
                             switchAppIcon(to: icon)
@@ -271,66 +285,76 @@ struct SettingsScreen: View {
                             .padding(10)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(
-                                RoundedRectangle(cornerRadius: 4, style: .continuous)
-                                    .fill(panel)
+                                RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
+                                    .fill(panelMuted)
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 4, style: .continuous)
-                                            .strokeBorder(currentAppIcon == icon ? ember.opacity(0.74) : Color.white.opacity(0.08), lineWidth: 1)
+                                        RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
+                                            .strokeBorder(currentAppIcon == icon ? ember.opacity(0.72) : hairline, lineWidth: 1)
                                     )
                             )
                         }
                         .buttonStyle(.plain)
-                        .disabled(isSwitchingAppIcon || !AppIconService.supportsAlternateIcons && icon != .primary)
+                        .disabled(isSwitchingAppIcon)
                         .accessibilityIdentifier("settings.icon.\(icon.rawValue.lowercased())")
                         .accessibilityLabel("\(icon.title) app icon")
                         .accessibilityAddTraits(currentAppIcon == icon ? .isSelected : [])
                     }
-                }
-
-                if !AppIconService.supportsAlternateIcons {
-                    Text("Alternate icons aren’t available in this environment.")
-                        .font(.system(size: 12, weight: .regular))
-                        .foregroundStyle(textSecondary)
                 }
             }
 
             divider
 
             settingsToggle(
+                icon: "circle.lefthalf.filled",
                 title: "OLED Black",
                 subtitle: "Push studio backgrounds to pure black.",
                 identifier: "settings.oledBlack",
                 isOn: $oledBlackEnabled
             )
         }
-        .padding(18)
+        .padding(20)
         .background(studioPanel)
     }
 
     private var privacyPanel: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 14) {
             sectionHeader("DATA")
 
-            Text("Tasks, reflections, streaks, and preferences stay local on this device for now.")
-                .font(.system(size: 15, weight: .regular))
-                .foregroundStyle(textPrimary.opacity(0.86))
-                .fixedSize(horizontal: false, vertical: true)
+            HStack(alignment: .top, spacing: 12) {
+                rowIcon("lock", tint: textSecondary)
 
-            Text("iCloud sync is not enabled in this build.")
-                .font(.system(size: 13, weight: .regular))
-                .foregroundStyle(textSecondary)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Local by default")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(textPrimary)
+
+                    Text("Tasks, reflections, streaks, and preferences stay local on this device for now.")
+                        .font(.system(size: 15, weight: .regular))
+                        .foregroundStyle(textPrimary.opacity(0.86))
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Text("iCloud sync is not enabled in this build.")
+                        .font(.system(size: 13, weight: .regular))
+                        .foregroundStyle(textSecondary)
+                }
+            }
+            .padding(14)
+            .background(rowBackground)
         }
-        .padding(18)
+        .padding(20)
         .background(studioPanel)
     }
 
     private func settingsToggle(
+        icon: String,
         title: String,
         subtitle: String,
         identifier: String,
         isOn: Binding<Bool>
     ) -> some View {
         HStack(spacing: 12) {
+            rowIcon(icon, tint: isOn.wrappedValue ? ember : textSecondary)
+
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
                     .font(.system(size: 17, weight: .semibold))
@@ -349,35 +373,56 @@ struct SettingsScreen: View {
                 .tint(ember)
                 .accessibilityIdentifier(identifier)
         }
-        .padding(.vertical, 11)
+        .padding(14)
+        .background(rowBackground)
+    }
+
+    private var settingsGridColumns: [GridItem] {
+        [
+            GridItem(.flexible(), spacing: 12),
+            GridItem(.flexible(), spacing: 12)
+        ]
     }
 
     private func sectionHeader(_ title: String) -> some View {
         Text(title)
-            .font(.system(size: 11, weight: .semibold))
-            .tracking(2.4)
-            .foregroundStyle(textSecondary)
+            .emberSectionLabel()
     }
 
     private var studioPanel: some View {
-        RoundedRectangle(cornerRadius: 4, style: .continuous)
+        RoundedRectangle(cornerRadius: EmberCornerRadii.card, style: .continuous)
             .fill(panel)
             .overlay(
-                RoundedRectangle(cornerRadius: 4, style: .continuous)
-                    .strokeBorder(Color.white.opacity(0.08), lineWidth: 1)
+                RoundedRectangle(cornerRadius: EmberCornerRadii.card, style: .continuous)
+                    .strokeBorder(hairline, lineWidth: 1)
             )
+    }
+
+    private var rowBackground: some View {
+        RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
+            .fill(panelMuted)
+            .shadow(color: .black.opacity(0.10), radius: 10, y: 4)
+    }
+
+    private func rowIcon(_ name: String, tint: Color) -> some View {
+        Image(systemName: name)
+            .font(.system(size: 14, weight: .semibold))
+            .foregroundStyle(tint)
+            .frame(width: 32, height: 32)
+            .background(Circle().fill(panelElevated))
+            .overlay(Circle().strokeBorder(hairline, lineWidth: 1))
     }
 
     private var divider: some View {
         Rectangle()
-            .fill(Color.white.opacity(0.08))
+            .fill(Color.clear)
             .frame(height: 1)
     }
 
     private var statusColor: Color {
         switch notificationStatus {
         case "Allowed": return ember
-        case "Denied": return Color.red.opacity(0.78)
+        case "Denied": return EmberColors.risk
         default: return panelMuted
         }
     }
@@ -462,31 +507,9 @@ private struct AppIconPreview: View {
                     )
                 )
 
-            Circle()
-                .stroke(icon.ringColor, lineWidth: 2.2)
-                .frame(width: 30, height: 30)
-
-            Circle()
-                .fill(icon.glowColor)
-                .frame(width: 42, height: 42)
-                .blur(radius: 10)
-
-            Circle()
-                .fill(
-                    RadialGradient(
-                        colors: [icon.coreInner, icon.coreOuter],
-                        center: .topLeading,
-                        startRadius: 2,
-                        endRadius: 16
-                    )
-                )
-                .frame(width: 18, height: 18)
-                .overlay(alignment: .topLeading) {
-                    Circle()
-                        .fill(Color.white.opacity(icon == .black ? 0.07 : 0.18))
-                        .frame(width: 6, height: 6)
-                        .offset(x: 2, y: 1)
-                }
+            Text("[thre]")
+                .font(.system(size: 19, weight: .semibold, design: .default))
+                .foregroundStyle(EmberColors.ember)
         }
         .overlay(
             RoundedRectangle(cornerRadius: 18, style: .continuous)

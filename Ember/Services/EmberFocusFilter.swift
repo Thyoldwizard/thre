@@ -1,5 +1,4 @@
 // EmberFocusFilter.swift
-// Step 10.4 — Focus Filter intent.
 // Lets iOS Focus Modes (e.g., "Work", "Personal") configure Ember to show
 // only a specific slot when the Focus mode is active.
 // User sets this via Settings → Focus → [Mode] → App Filters → Ember.

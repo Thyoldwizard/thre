@@ -1,10 +1,4 @@
 // FocusSessionAttributes.swift
-// Step 8.2 — Shared between main app and EmberWidgetExtension.
-//
-// XCODE SETUP REQUIRED:
-//   Add this file to the EmberWidgetExtension target via File Inspector →
-//   Target Membership. Both targets must compile it.
-//
 import ActivityKit
 import Foundation
 

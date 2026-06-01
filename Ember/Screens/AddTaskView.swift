@@ -27,10 +27,21 @@ struct AddTaskView: View {
     @FocusState private var titleFocused: Bool
     @FocusState private var subtaskFieldFocused: Bool
 
+    // MARK: - Studio tokens
+    private var background: Color { EmberColors.studioBackground }
+    private let panel = EmberColors.primaryPanel
+    private let row = EmberColors.nestedRow
+    private let raised = EmberColors.raisedElement
+    private let textPrimary = EmberColors.textPrimary
+    private let textSecondary = EmberColors.textSecondary
+    private let textTertiary = EmberColors.textTertiary
+    private let hairline = EmberColors.divider
+    private var ember: Color { EmberColors.ember }
+
     // MARK: - Init
     init() {
-        let today    = Calendar.current.startOfDay(for: Date())
-        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+        let today    = DateService.shared.today
+        let tomorrow = DateService.shared.calendar.date(byAdding: .day, value: 1, to: today)!
         _todayTasks = Query(
             filter: #Predicate<EmberTask> { $0.dayDate >= today && $0.dayDate < tomorrow },
             sort: \EmberTask.displayOrder
@@ -40,193 +51,405 @@ struct AddTaskView: View {
     // MARK: - Computed
     private var trimmedTitle: String { taskTitle.trimmingCharacters(in: .whitespacesAndNewlines) }
     private var canSave: Bool { !trimmedTitle.isEmpty && todayTasks.count < 3 }
+    private var nextSlotLabel: String {
+        todayTasks.count >= 3 ? "3/3 chosen" : "Slot \(todayTasks.count + 1) of 3"
+    }
+    private var todayLabel: String {
+        DateService.shared.today.formatted(.dateTime.weekday(.wide).month(.abbreviated).day())
+    }
+    private var selectedTimeLabel: String {
+        selectedTime.formatted(date: .omitted, time: .shortened)
+    }
+    private var subtaskCountLabel: String {
+        subtaskDrafts.isEmpty ? "Optional" : "\(subtaskDrafts.count) drafted"
+    }
 
     // MARK: - Body
     var body: some View {
         ZStack(alignment: .top) {
-            Color(hex: "F7F5F2").ignoresSafeArea()
+            background.ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 0) {
-                // ── Top bar ─────────────────────────────────────────
-                HStack {
-                    Button {
-                        router.goBack()
-                    } label: {
-                        HStack(spacing: 5) {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 14, weight: .medium))
-                            Text("Back")
-                                .font(.system(size: 16, weight: .regular))
-                        }
-                        .foregroundStyle(Color(hex: "1A1A1A").opacity(0.55))
-                    }
-                    .buttonStyle(.plain)
-
-                    Spacer()
-
-                    Button {
-                        saveTask()
-                    } label: {
-                        Text("Save")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(canSave ? Color(hex: "E8562A") : Color(hex: "C4C0BA"))
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(!canSave)
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-                .padding(.bottom, 20)
+                topBar
 
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 0) {
-
-                        // ── Large title input ────────────────────────
-                        ZStack(alignment: .topLeading) {
-                            if taskTitle.isEmpty {
-                                Text("What will you focus on?")
-                                    .font(.system(size: 28, weight: .light))
-                                    .foregroundStyle(Color(hex: "C0C0C0"))
-                                    .allowsHitTesting(false)
-                            }
-                            TextEditor(text: $taskTitle)
-                                .font(.system(size: 28, weight: .regular))
-                                .foregroundStyle(Color(hex: "1A1A1A"))
-                                .focused($titleFocused)
-                                .scrollDisabled(true)
-                                .frame(minHeight: 80)
-                                .scrollContentBackground(.hidden)
-                                .background(Color.clear)
-                        }
-                        .padding(.horizontal, 24)
-
-                        // ── Schedule time ────────────────────────────
-                        VStack(alignment: .leading, spacing: 10) {
-                            HStack {
-                                Image(systemName: "clock")
-                                    .font(.system(size: 13, weight: .medium))
-                                    .foregroundStyle(scheduleTime ? Color(hex: "E8562A") : Color(hex: "9A9A9A"))
-                                Text("Schedule a time")
-                                    .font(.system(size: 15, weight: .medium))
-                                    .foregroundStyle(Color(hex: "1A1A1A"))
-                                Spacer()
-                                Toggle("", isOn: $scheduleTime)
-                                    .labelsHidden()
-                                    .tint(Color(hex: "E8562A"))
-                            }
-
-                            if scheduleTime {
-                                DatePicker("", selection: $selectedTime, displayedComponents: .hourAndMinute)
-                                    .datePickerStyle(.compact)
-                                    .labelsHidden()
-                                    .tint(Color(hex: "E8562A"))
-                            }
-                        }
-                        .padding(.horizontal, 24)
-                        .padding(.top, 24)
-
-                        // ── Subtasks section ─────────────────────────
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text("SUBTASKS")
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundStyle(Color(hex: "9A9A9A"))
-                                .tracking(1.5)
-                                .padding(.bottom, 14)
-
-                            // Itinerary thread
-                            if !subtaskDrafts.isEmpty || isAddingSubtask {
-                                VStack(alignment: .leading, spacing: 0) {
-                                    ForEach(Array(subtaskDrafts.enumerated()), id: \.offset) { i, draft in
-                                        subtaskRow(title: draft.title, index: i)
-                                        if i < subtaskDrafts.count - 1 || isAddingSubtask {
-                                            connectorLine
-                                        }
-                                    }
-
-                                    // Inline add field at bottom of thread
-                                    if isAddingSubtask {
-                                        HStack(alignment: .center, spacing: 10) {
-                                            // Dot
-                                            Circle()
-                                                .strokeBorder(Color(hex: "1A1A1A").opacity(0.30), lineWidth: 1)
-                                                .frame(width: 7, height: 7)
-
-                                            TextField("Subtask title", text: $newSubtaskText)
-                                                .font(.system(size: 15, weight: .regular))
-                                                .foregroundStyle(Color(hex: "1A1A1A"))
-                                                .focused($subtaskFieldFocused)
-                                                .submitLabel(.done)
-                                                .onSubmit { commitSubtask() }
-                                        }
-                                    }
-                                }
-                            }
-
-                            // "+ Add subtask" button
-                            if !isAddingSubtask {
-                                Button {
-                                    isAddingSubtask = true
-                                    newSubtaskText = ""
-                                    subtaskFieldFocused = true
-                                } label: {
-                                    HStack(spacing: 8) {
-                                        // Dot placeholder in thread position
-                                        Circle()
-                                            .strokeBorder(Color(hex: "1A1A1A").opacity(0.20), lineWidth: 1)
-                                            .frame(width: 7, height: 7)
-                                        Text("+ Add subtask")
-                                            .font(.system(size: 14, weight: .regular))
-                                            .foregroundStyle(Color(hex: "9A9A9A"))
-                                    }
-                                }
-                                .buttonStyle(.plain)
-                                .padding(.top, subtaskDrafts.isEmpty ? 0 : 8)
-                            }
-                        }
-                        .padding(.horizontal, 24)
-                        .padding(.top, 28)
+                    VStack(alignment: .leading, spacing: EmberSpacing.cardGap) {
+                        missionPanel
+                        scheduleSheet
+                        subtaskSheet
                     }
-                    .padding(.bottom, 40)
+                    .padding(.horizontal, EmberSpacing.screenHorizontal)
+                    .padding(.bottom, 44)
                 }
             }
         }
         .toolbar(.hidden, for: .navigationBar)
-        .onAppear { titleFocused = true }
+        .onAppear {
+            // 10.2 — consume pending title from deep link / AddTaskIntent
+            if let pending = router.pendingAddTitle, !pending.isEmpty {
+                taskTitle = pending
+                router.pendingAddTitle = nil
+            } else {
+                titleFocused = true
+            }
+        }
     }
 
-    // MARK: - Subtask row (itinerary dot + title)
+    // MARK: - Top bar
 
-    private func subtaskRow(title: String, index: Int) -> some View {
-        HStack(alignment: .center, spacing: 10) {
-            Circle()
-                .fill(Color(hex: "1A1A1A").opacity(0.75))
-                .frame(width: 7, height: 7)
+    private var topBar: some View {
+        HStack {
+            Button {
+                router.goBack()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(textPrimary)
+                    .frame(width: 42, height: 42)
+                    .background(Circle().fill(raised))
+                    .overlay(Circle().strokeBorder(hairline, lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Back")
+            .accessibilityIdentifier("addTask.back")
 
-            Text(title)
-                .font(.system(size: 15, weight: .regular))
-                .foregroundStyle(Color(hex: "1A1A1A").opacity(0.85))
-                .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            Spacer()
 
-            // Remove button
+            VStack(spacing: 2) {
+                Text("SET FOCUS")
+                    .font(.system(size: 11, weight: .semibold))
+                    .tracking(2.2)
+                    .foregroundStyle(textSecondary)
+                Text("\(todayTasks.count)/3 chosen")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(textPrimary.opacity(0.72))
+            }
+
+            Spacer()
+
+            Button {
+                saveTask()
+            } label: {
+                HStack(spacing: 7) {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 13, weight: .bold))
+
+                    Text("SAVE")
+                        .font(.system(size: 12, weight: .bold))
+                        .tracking(0.8)
+                }
+                .foregroundStyle(canSave ? background : textSecondary)
+                .frame(width: 88, height: 42)
+                .background(
+                    RoundedRectangle(cornerRadius: EmberCornerRadii.button, style: .continuous)
+                        .fill(canSave ? ember : raised)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: EmberCornerRadii.button, style: .continuous)
+                        .strokeBorder(canSave ? Color.clear : hairline, lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+            .disabled(!canSave)
+            .accessibilityLabel("Save task")
+            .accessibilityIdentifier("addTask.save")
+        }
+        .padding(.horizontal, EmberSpacing.screenHorizontal)
+        .padding(.top, 14)
+        .padding(.bottom, 18)
+    }
+
+    // MARK: - Mission panel + grouped sheets
+
+    private var missionPanel: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            HStack(alignment: .firstTextBaseline) {
+                sectionHeader("MISSION")
+
+                Spacer()
+
+                Text(nextSlotLabel)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(textSecondary)
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text(todayLabel)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(textSecondary)
+
+                ZStack(alignment: .topLeading) {
+                    if taskTitle.isEmpty {
+                        Text("Name the focus")
+                            .font(.system(size: 38, weight: .bold))
+                            .foregroundStyle(textTertiary)
+                            .padding(.top, 8)
+                            .allowsHitTesting(false)
+                    }
+
+                    TextEditor(text: $taskTitle)
+                        .font(.system(size: 38, weight: .bold))
+                        .foregroundStyle(textPrimary)
+                        .focused($titleFocused)
+                        .scrollDisabled(true)
+                        .frame(minHeight: 150)
+                        .scrollContentBackground(.hidden)
+                        .background(Color.clear)
+                        .tint(textPrimary)
+                        .accessibilityLabel("Task title")
+                        .accessibilityIdentifier("addTask.title")
+                }
+            }
+        }
+        .padding(20)
+        .background(studioPanel)
+    }
+
+    private var scheduleSheet: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionHeader("SCHEDULE")
+
+            VStack(spacing: 8) {
+                groupedRow(
+                    icon: "clock",
+                    title: "Time block",
+                    subtitle: scheduleTime ? selectedTimeLabel : "No time set"
+                ) {
+                    scheduleSwitch
+                }
+
+                if scheduleTime {
+                    groupedRow(
+                        icon: "timer",
+                        title: "Starts",
+                        subtitle: "Today"
+                    ) {
+                        DatePicker("", selection: $selectedTime, displayedComponents: .hourAndMinute)
+                            .datePickerStyle(.compact)
+                            .labelsHidden()
+                            .tint(textPrimary)
+                            .colorScheme(.dark)
+                            .frame(width: 96, alignment: .trailing)
+                            .accessibilityIdentifier("addTask.timePicker")
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+            }
+        }
+        .padding(20)
+        .background(studioPanel)
+        .animation(EmberAnimation.snappy, value: scheduleTime)
+    }
+
+    private var subtaskSheet: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .firstTextBaseline) {
+                sectionHeader("SUBTASKS")
+
+                Spacer()
+
+                Text(subtaskCountLabel)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(textSecondary)
+            }
+
+            VStack(spacing: 8) {
+                ForEach(Array(subtaskDrafts.enumerated()), id: \.element.id) { index, draft in
+                    savedSubtaskRow(title: draft.title, index: index)
+                }
+
+                if isAddingSubtask {
+                    newSubtaskRow
+                } else {
+                    addSubtaskRow
+                }
+            }
+        }
+        .padding(20)
+        .background(studioPanel)
+        .animation(EmberAnimation.snappy, value: subtaskDrafts.count)
+        .animation(EmberAnimation.snappy, value: isAddingSubtask)
+    }
+
+    private var scheduleSwitch: some View {
+        Button {
+            scheduleTime.toggle()
+        } label: {
+            ZStack(alignment: scheduleTime ? .trailing : .leading) {
+                Capsule()
+                    .fill(raised.opacity(scheduleTime ? 1 : 0.78))
+                    .overlay(Capsule().strokeBorder(hairline, lineWidth: 1))
+
+                Circle()
+                    .fill(scheduleTime ? textPrimary : textSecondary)
+                    .frame(width: 26, height: 26)
+                    .padding(4)
+            }
+            .frame(width: 58, height: 34)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Schedule task")
+        .accessibilityValue(scheduleTime ? "On" : "Off")
+        .accessibilityIdentifier("addTask.scheduleToggle")
+    }
+
+    private var addSubtaskRow: some View {
+        Button {
+            isAddingSubtask = true
+            newSubtaskText = ""
+            subtaskFieldFocused = true
+        } label: {
+            groupedRowContent(
+                icon: "plus",
+                title: "Add subtask",
+                subtitle: subtaskDrafts.isEmpty ? "Optional support step" : "Add another support step"
+            ) {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(textTertiary)
+                    .frame(width: 44, alignment: .trailing)
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("addTask.addSubtask")
+    }
+
+    private var newSubtaskRow: some View {
+        groupedRowContent(
+            icon: "square.and.pencil",
+            title: "",
+            subtitle: ""
+        ) {
+            Button {
+                commitSubtask()
+            } label: {
+                Image(systemName: "return")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(textSecondary)
+                    .frame(width: 44, height: 32)
+                    .background(Capsule().fill(raised))
+                    .overlay(Capsule().strokeBorder(hairline, lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Commit subtask")
+        } content: {
+            TextField("Subtask title", text: $newSubtaskText)
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(textPrimary)
+                .focused($subtaskFieldFocused)
+                .submitLabel(.done)
+                .tint(textPrimary)
+                .onSubmit { commitSubtask() }
+                .accessibilityIdentifier("addTask.subtaskField")
+        }
+    }
+
+    private func savedSubtaskRow(title: String, index: Int) -> some View {
+        groupedRowContent(
+            icon: "checklist.unchecked",
+            title: title,
+            subtitle: "Support step \(index + 1)"
+        ) {
             Button {
                 subtaskDrafts.remove(at: index)
             } label: {
                 Image(systemName: "xmark")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(Color(hex: "1A1A1A").opacity(0.30))
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(textSecondary)
+                    .frame(width: 32, height: 32)
+                    .background(Circle().fill(raised))
+                    .overlay(Circle().strokeBorder(hairline, lineWidth: 1))
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Remove subtask")
         }
     }
 
-    // 1pt connector line between subtask rows
-    private var connectorLine: some View {
-        Rectangle()
-            .fill(Color(hex: "1A1A1A").opacity(0.20))
-            .frame(width: 1, height: 10)
-            .padding(.leading, 3) // align to dot center (7pt dot / 2 = 3.5 → 3)
-            .padding(.vertical, 2)
+    private func groupedRow<Trailing: View>(
+        icon: String,
+        title: String,
+        subtitle: String,
+        @ViewBuilder trailing: () -> Trailing
+    ) -> some View {
+        groupedRowContent(icon: icon, title: title, subtitle: subtitle, trailing: trailing)
+    }
+
+    private func groupedRowContent<Trailing: View>(
+        icon: String,
+        title: String,
+        subtitle: String,
+        @ViewBuilder trailing: () -> Trailing
+    ) -> some View {
+        groupedRowContent(icon: icon, title: title, subtitle: subtitle, trailing: trailing) {
+            rowText(title: title, subtitle: subtitle)
+        }
+    }
+
+    private func groupedRowContent<Content: View, Trailing: View>(
+        icon: String,
+        title: String,
+        subtitle: String,
+        @ViewBuilder trailing: () -> Trailing,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        HStack(spacing: 12) {
+            rowIcon(icon)
+
+            content()
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            trailing()
+                .frame(width: 96, alignment: .trailing)
+        }
+        .padding(14)
+        .background(rowBackground)
+        .contentShape(RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous))
+    }
+
+    private func rowText(title: String, subtitle: String) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(title)
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(textPrimary)
+                .lineLimit(1)
+
+            Text(subtitle)
+                .font(.system(size: 13, weight: .regular))
+                .foregroundStyle(textSecondary)
+                .lineLimit(1)
+        }
+    }
+
+    private func rowIcon(_ name: String) -> some View {
+        Image(systemName: name)
+            .font(.system(size: 14, weight: .semibold))
+            .foregroundStyle(textSecondary)
+            .frame(width: 32, height: 32)
+            .background(Circle().fill(raised))
+            .overlay(Circle().strokeBorder(hairline, lineWidth: 1))
+    }
+
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title)
+            .emberSectionLabel()
+    }
+
+    private var studioPanel: some View {
+        RoundedRectangle(cornerRadius: EmberCornerRadii.card, style: .continuous)
+            .fill(panel)
+            .overlay(
+                RoundedRectangle(cornerRadius: EmberCornerRadii.card, style: .continuous)
+                    .strokeBorder(hairline, lineWidth: 1)
+            )
+    }
+
+    private var rowBackground: some View {
+        RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
+            .fill(row)
+            .overlay(
+                RoundedRectangle(cornerRadius: EmberCornerRadii.row, style: .continuous)
+                    .strokeBorder(hairline, lineWidth: 1)
+            )
     }
 
     // MARK: - Actions
@@ -263,6 +486,10 @@ struct AddTaskView: View {
             modelContext.insert(subtask)
         }
 
+        DailyRecordService.upsertRecord(in: modelContext)
+        Task { await TaskCompletionCoordinator.shared.scheduleReminder(for: task) }
+        // 10.1 — index new task in Spotlight
+        SpotlightService.index(task)
         router.goBack()
     }
 }

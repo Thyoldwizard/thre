@@ -1,6 +1,5 @@
 // ReflectionScreen.swift
-// Redesigned to match HomeScreen light visual language:
-// warm off-white bg, large thin heading, white card editor
+// Dark studio reflection surface.
 import SwiftUI
 import SwiftData
 
@@ -14,169 +13,69 @@ struct ReflectionScreen: View {
     @Query private var todayReflections: [Reflection]
 
     // MARK: - State
-    @State private var reflectionText:   String = ""
-    @State private var isSaved:          Bool   = false
+    @State private var reflectionText = ""
+    @State private var isSaved = false
+    @State private var saveSymbolTrigger = false
     @FocusState private var isEditorFocused: Bool
 
+    // MARK: - Studio tokens
+    private var background: Color { EmberColors.studioBackground }
+    private let panel = EmberColors.primaryPanel
+    private let row = EmberColors.nestedRow
+    private let raised = EmberColors.raisedElement
+    private let textPrimary = EmberColors.textPrimary
+    private let textSecondary = EmberColors.textSecondary
+    private let textTertiary = EmberColors.textTertiary
+    private let hairline = EmberColors.divider
+    private var ember: Color { EmberColors.ember }
+    private let prompts = ReflectionPrompts.shared
+
     init() {
-        let today    = Calendar.current.startOfDay(for: Date())
-        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
-        _todayReflections = Query(
-            filter: #Predicate<Reflection> { r in
-                r.date >= today && r.date < tomorrow
+        let today = DateService.shared.today
+        let tomorrow = DateService.shared.calendar.date(byAdding: .day, value: 1, to: today)!
+        var descriptor = FetchDescriptor<Reflection>(
+            predicate: #Predicate<Reflection> { reflection in
+                reflection.date >= today && reflection.date < tomorrow
             }
         )
+        descriptor.fetchLimit = 1
+        _todayReflections = Query(descriptor)
     }
 
     // MARK: - Computed
     private var existingReflection: Reflection? { todayReflections.first }
-    private var hasExisting: Bool               { existingReflection != nil }
+    private var hasExisting: Bool { existingReflection != nil }
+    private var wordCount: Int { reflectionText.split { $0.isWhitespace }.count }
+
     private var canSave: Bool {
         !reflectionText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isSaved
     }
+
     private var saveLabel: String {
         if isSaved { return "Saved" }
         return hasExisting ? "Update" : "Save"
     }
 
     // MARK: - Body
-
     var body: some View {
-        ZStack(alignment: .top) {
-            // Background — warm off-white
-            Color(hex: "EEEAE3").ignoresSafeArea()
+        ZStack {
+            background.ignoresSafeArea()
 
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    topBar
+                    promptPanel
+                    editorPanel
 
-                    // ── Back nav ──────────────────────────────────
-                    Button { router.goBack() } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 14, weight: .medium))
-                            Text("Today")
-                                .font(.system(size: 14, weight: .medium))
-                        }
-                        .foregroundStyle(Color(hex: "1A1A1A").opacity(0.55))
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 16)
-
-                    // ── Heading block — mirrors HomeScreen date block ──
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("REFLECT")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(Color(hex: "9A9A9A"))
-                            .tracking(3)
-
-                        Text("How did\ntoday feel?")
-                            .font(.system(size: 46, weight: .thin))
-                            .foregroundStyle(Color(hex: "1A1A1A"))
-                            .lineSpacing(2)
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.top, 20)
-
-                    // ── White card — text editor ──────────────────
-                    ZStack(alignment: .top) {
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .fill(Color.white)
-                            .shadow(color: .black.opacity(0.06), radius: 16, x: 0, y: 4)
-
-                        VStack(alignment: .leading, spacing: 0) {
-
-                            // Editor
-                            ZStack(alignment: .topLeading) {
-                                if reflectionText.isEmpty && !isEditorFocused {
-                                    Text("Write a few words about your day...")
-                                        .font(.system(size: 16, weight: .regular))
-                                        .foregroundStyle(Color(hex: "9A9A9A"))
-                                        .padding(.horizontal, 16)
-                                        .padding(.top, 22)
-                                        .allowsHitTesting(false)
-                                }
-
-                                TextEditor(text: $reflectionText)
-                                    .font(.system(size: 16, weight: .regular))
-                                    .foregroundStyle(Color(hex: "1A1A1A"))
-                                    .scrollContentBackground(.hidden)
-                                    .background(Color.clear)
-                                    .focused($isEditorFocused)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 16)
-                                    .frame(minHeight: 200)
-                            }
-
-                            // Divider
-                            Rectangle()
-                                .fill(Color(hex: "1A1A1A").opacity(0.06))
-                                .frame(height: 1)
-                                .padding(.horizontal, 20)
-
-                            // Save button row inside card
-                            HStack {
-                                // Character count hint
-                                let wordCount = reflectionText
-                                    .split { $0.isWhitespace }
-                                    .count
-                                Text(reflectionText.isEmpty ? "" : "\(wordCount) words")
-                                    .font(.system(size: 12, weight: .regular))
-                                    .foregroundStyle(Color(hex: "9A9A9A"))
-
-                                Spacer()
-
-                                // Save pill button
-                                Button {
-                                    saveReflection()
-                                } label: {
-                                    HStack(spacing: 6) {
-                                        if isSaved {
-                                            Image(systemName: "checkmark")
-                                                .font(.system(size: 12, weight: .semibold))
-                                        }
-                                        Text(saveLabel)
-                                            .font(.system(size: 14, weight: .semibold))
-                                    }
-                                    .foregroundStyle(canSave ? Color.white : Color.white.opacity(0.50))
-                                    .padding(.horizontal, 20)
-                                    .padding(.vertical, 10)
-                                    .background(
-                                        Capsule()
-                                            .fill(canSave
-                                                  ? Color(hex: "1A1A1A")
-                                                  : Color(hex: "1A1A1A").opacity(0.25))
-                                    )
-                                }
-                                .buttonStyle(.plain)
-                                .disabled(!canSave)
-                            }
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 14)
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 24)
-                    .animation(EmberAnimation.fadeIn, value: isSaved)
-
-                    // ── Saved confirmation ────────────────────────
                     if isSaved {
-                        HStack(spacing: 8) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 14))
-                                .foregroundStyle(Color(hex: "96B89A"))
-                            Text("Reflection saved.")
-                                .font(.system(size: 13, weight: .regular))
-                                .foregroundStyle(Color(hex: "9A9A9A"))
-                        }
-                        .padding(.horizontal, 24)
-                        .padding(.top, 16)
-                        .transition(.opacity)
+                        savedNotice
                     }
-
-                    Spacer().frame(height: 48)
                 }
+                .padding(.horizontal, EmberSpacing.screenHorizontal)
+                .padding(.top, 14)
+                .padding(.bottom, 42)
             }
+            .scrollIndicators(.hidden)
         }
         .toolbar(.hidden, for: .navigationBar)
         .animation(EmberAnimation.fadeIn, value: isSaved)
@@ -187,8 +86,144 @@ struct ReflectionScreen: View {
         }
     }
 
-    // MARK: - Save action
+    // MARK: - Layout
+    private var topBar: some View {
+        HStack {
+            Button {
+                router.goBack()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(textPrimary)
+                    .frame(width: 42, height: 42)
+                    .background(Circle().fill(raised))
+                    .overlay(Circle().strokeBorder(hairline, lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Back")
+            .accessibilityIdentifier("reflection.back")
 
+            Spacer()
+
+            Text("REFLECT")
+                .font(.system(size: 11, weight: .semibold))
+                .tracking(2.4)
+                .foregroundStyle(textSecondary)
+
+            Spacer()
+
+            Button {
+                saveReflection()
+            } label: {
+                HStack(spacing: 7) {
+                    Image(systemName: isSaved ? "checkmark" : "square.and.pencil")
+                        .font(.system(size: 13, weight: .bold))
+                        .completeBounce(saveSymbolTrigger)
+                        .replaceCheck(isSaved)
+
+                    Text(saveLabel.uppercased())
+                        .font(.system(size: 12, weight: .bold))
+                        .tracking(0.8)
+                }
+                .foregroundStyle(canSave ? background : textSecondary)
+                .frame(width: 96, height: 42)
+                .background(
+                    RoundedRectangle(cornerRadius: EmberCornerRadii.button, style: .continuous)
+                        .fill(canSave ? ember : raised)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: EmberCornerRadii.button, style: .continuous)
+                        .strokeBorder(canSave ? Color.clear : hairline, lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+            .disabled(!canSave)
+            .accessibilityLabel(saveLabel)
+            .accessibilityIdentifier("reflection.topSave")
+            .accessibilityValue(isSaved ? "saved" : "unsaved")
+        }
+    }
+
+    private var promptPanel: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("CLOSE THE DAY")
+                .emberSectionLabel()
+
+            Text(prompts.prompt(for: DateService.shared.today))
+                .font(.system(size: 38, weight: .bold))
+                .foregroundStyle(textPrimary)
+                .lineLimit(4)
+        }
+        .padding(20)
+        .background(studioPanel)
+    }
+
+    private var editorPanel: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ZStack(alignment: .topLeading) {
+                if reflectionText.isEmpty && !isEditorFocused {
+                    Text("A few plain words are enough.")
+                        .font(.system(size: 16, weight: .regular))
+                        .foregroundStyle(textSecondary)
+                        .padding(.horizontal, 6)
+                        .padding(.top, 8)
+                        .allowsHitTesting(false)
+                }
+
+                TextEditor(text: $reflectionText)
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundStyle(textPrimary)
+                    .scrollContentBackground(.hidden)
+                    .background(Color.clear)
+                    .focused($isEditorFocused)
+                    .tint(ember)
+                    .frame(minHeight: 230)
+                    .accessibilityLabel("Reflection text")
+                    .accessibilityIdentifier("reflection.text")
+            }
+            .padding(16)
+
+            Rectangle()
+                .fill(hairline)
+                .frame(height: 1)
+
+            HStack {
+                Text(reflectionText.isEmpty ? "" : "\(wordCount) words")
+                    .font(.system(size: 12, weight: .regular))
+                    .foregroundStyle(textSecondary)
+
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+        }
+        .background(studioPanel)
+    }
+
+    private var savedNotice: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 14))
+                .foregroundStyle(textSecondary)
+                .replaceCheck(isSaved)
+            Text("Reflection saved.")
+                .font(.system(size: 13, weight: .regular))
+                .foregroundStyle(textSecondary)
+        }
+        .transition(.opacity.combined(with: .move(edge: .top)))
+    }
+
+    // MARK: - Components
+    private var studioPanel: some View {
+        RoundedRectangle(cornerRadius: EmberCornerRadii.card, style: .continuous)
+            .fill(panel)
+            .overlay(
+                RoundedRectangle(cornerRadius: EmberCornerRadii.card, style: .continuous)
+                    .strokeBorder(hairline, lineWidth: 1)
+            )
+    }
+
+    // MARK: - Save action
     private func saveReflection() {
         let trimmed = reflectionText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
@@ -200,39 +235,16 @@ struct ReflectionScreen: View {
             modelContext.insert(reflection)
         }
 
+        do { try modelContext.save() }
+        catch { EmberLogger.records.error("reflection save failed", error) }
+
         isSaved = true
+        saveSymbolTrigger.toggle()
         isEditorFocused = false
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+        Task {
+            try? await Task.sleep(for: .seconds(2))
             withAnimation(EmberAnimation.fadeOut) { isSaved = false }
         }
     }
-}
-
-// MARK: - Previews
-
-#Preview("Empty") {
-    NavigationStack {
-        ReflectionScreen()
-    }
-    .environment(EmberRouter())
-    .modelContainer(for: [EmberTask.self, DailyRecord.self, Reflection.self], inMemory: true)
-}
-
-#Preview("With Existing") {
-    let config    = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(
-        for: EmberTask.self, DailyRecord.self, Reflection.self,
-        configurations: config
-    )
-    let ctx   = container.mainContext
-    let today = Calendar.current.startOfDay(for: Date())
-    let r     = Reflection(date: today, text: "Today felt focused and productive. I got the big three done early and had energy left for the afternoon.")
-    ctx.insert(r)
-
-    return NavigationStack {
-        ReflectionScreen()
-    }
-    .environment(EmberRouter())
-    .modelContainer(container)
 }
