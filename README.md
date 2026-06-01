@@ -6,7 +6,7 @@ The Xcode project is still named `Ember` internally, but the portfolio-facing ap
 
 ## Status
 
-This project is complete for portfolio use. It includes a polished iPhone-first SwiftUI app, seeded screenshot routes, a captured demo video, widgets, Live Activity support, reminders, focus-filter plumbing, share extension support, Spotlight indexing, tests, and a privacy manifest.
+This project is complete for portfolio use. It includes a polished iPhone-first SwiftUI app, seeded screenshot routes, widgets, Live Activity support, reminders, focus-filter plumbing, share extension support, Spotlight indexing, tests, and a privacy manifest.
 
 App Store/TestFlight work is intentionally parked for later. Before public shipping, the app still needs final signing/archive/upload decisions, hosted privacy and support URLs, App Store metadata decisions, and a real review of any account/auth claims. The Apple and Google sign-in buttons in onboarding are portfolio UI only; they complete onboarding locally and do not connect to auth or a backend.
 
@@ -45,7 +45,6 @@ App Store/TestFlight work is intentionally parked for later. Before public shipp
 - `EmberShareExtension/` - share extension.
 - `EmberTests/` and `EmberUITests/` - unit and UI test coverage.
 - `ThreScreenshots/iPhone-17/` - current portfolio screenshot set.
-- `DemoVideos/` - current portfolio demo video.
 
 ## Current Metadata
 
@@ -76,10 +75,6 @@ Current screenshot set:
 - `ThreScreenshots/iPhone-17/11-carry-forward.png`
 - `ThreScreenshots/iPhone-17/12-transcendence.png`
 - `ThreScreenshots/iPhone-17/13-settings.png`
-
-Current demo video:
-
-- `DemoVideos/thre-demo.mov`
 
 ## Verification
 
