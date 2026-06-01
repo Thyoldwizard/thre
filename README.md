@@ -48,7 +48,7 @@ More screenshots live in `ThreScreenshots/iPhone-17/`.
 
 ## Requirements
 
-- macOS with Xcode installed.
+- macOS with Xcode 26 or newer.
 - iOS Simulator runtime compatible with the project deployment target.
 - Xcode command line tools selected or `DEVELOPER_DIR` set explicitly.
 
@@ -66,6 +66,8 @@ Current project metadata:
 - Privacy manifest: `Ember/PrivacyInfo.xcprivacy`
 
 The internal `Ember` naming is an implementation codename retained to avoid a broad bundle/signing migration in this repository. The product name presented to users is `thre`.
+
+GitHub Actions linting runs on hosted macOS runners. Xcode build/test steps are included in CI and run when the runner image provides Xcode 26+; older runner images skip those steps with a notice.
 
 ## Build
 

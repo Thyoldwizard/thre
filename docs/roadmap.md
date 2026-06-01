@@ -4,7 +4,7 @@ This roadmap tracks public, open-source work. App Store distribution is intentio
 
 ## Near Term
 
-- Harden CI across available Xcode and iOS Simulator versions.
+- Harden CI once GitHub-hosted runners provide Xcode 26+ broadly.
 - Add more unit coverage around reminders, carry-forward, and route seeding.
 - Add accessibility labels and VoiceOver snapshots for primary flows.
 - Run a Dynamic Type pass on onboarding, task detail, schedule, and settings.
@@ -24,7 +24,7 @@ This roadmap tracks public, open-source work. App Store distribution is intentio
 - Accessibility review from someone who uses VoiceOver regularly.
 - Localization preparation and string extraction.
 - Widget reliability testing on different families and simulator sizes.
-- CI matrix tuning for current Xcode runner availability.
+- CI matrix tuning for Xcode 26+ runner availability.
 
 ## App Store Readiness
 
